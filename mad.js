@@ -19,7 +19,7 @@ mad.IR = {
             mad.IR.createPagination(p_InteractiveReport);
         });
 
-        apex.jQuery("#IR_01").on("apexafterrefresh", function () {
+        apex.jQuery("#" + p_InteractiveReport).on("apexafterrefresh", function () {
             console.info('apexafterrefresh');
             mad.IR.createPagination(p_InteractiveReport);
         });
