@@ -11,7 +11,7 @@ mad.IR = {
     /**
      * @function initPagination
      * @description Init createPagination event handlers
-     * @param p_InteractiveReport => Interactive Report Static ID
+     * @param p_InteractiveReport Interactive Report Static ID
      */
     initPagination: (p_InteractiveReport) => {
         apex.jQuery(apex.gPageContext$).on("apexreadyend", function (e) {
@@ -19,7 +19,7 @@ mad.IR = {
             mad.IR.createPagination(p_InteractiveReport);
         });
 
-        apex.jQuery("#IR_01").on("apexafterrefresh", function () {
+        apex.jQuery("#" + p_InteractiveReport).on("apexafterrefresh", function () {
             console.info('apexafterrefresh');
             mad.IR.createPagination(p_InteractiveReport);
         });
@@ -28,7 +28,7 @@ mad.IR = {
     /**
      * @function createPagination
      * @description  Create Buttons for pagination in the menubar for Interactive Report
-     * @param p_InteractiveReport => Interactive Report Static ID
+     * @param p_InteractiveReport Interactive Report Static ID
      */
     createPagination: (p_InteractiveReport) => {
         console.info('createPagination');
@@ -69,6 +69,36 @@ mad.IR = {
         if ($(IR_Pagination_Next).length === 0) {
             apex.item('ir_btn_next').disable();
         }
+    },
+
+    /**
+     * @function HighlightSearch
+     * @description  Highlight search for Interactive Report
+     * @param p_InteractiveReport Interactive Report Static ID
+     */
+    HighlightSearch: (p_InteractiveReport) => {
+        // Create dynamic Keyup Handler
+        $('#' + p_InteractiveReport).keyup(function (e) {
+            if (e.target.id == p_InteractiveReport + '_search_field') {
+                v_search = $('#' + p_InteractiveReport + '_search_field').val();
+                v_search = v_search.toLowerCase();
+                globalThis.gSearch = v_search;
+                //console.log('HighlightSearch => ' + v_search);
+                mad.util.HighlightCell(p_InteractiveReport, globalThis.gSearch, 'highlight-data');
+            }
+        });
+
+        // Create Handler for AfterRefresh
+        apex.jQuery('#' + p_InteractiveReport).on('apexafterrefresh', function () {
+            console.log('apexafterrefresh => HighlightSearch');
+            mad.util.HighlightCell(p_InteractiveReport, globalThis.gSearch, 'highlight-data');
+        });
+
+        // Create class for highlight style
+        mad.util.insertCSS('.highlight-data {background-color: #f5df69!important}');
+
+        // Clear local globalThis
+        globalThis.gSearch = null;
     }
 
 };
@@ -135,4 +165,45 @@ mad.download = {
             type: pType
         }));
     }
-}
+};
+
+mad.util = {
+    /**
+     * @function insertCSS
+     * @description Append a CSS Rule to the head
+     * @param p_CSS => '.highlight { backcolor: gold}'
+     */    
+     insertCSS: (p_CSS) => {
+        // Create a CSS Rule and add to the dom
+        var style = document.createElement('style');
+        document.head.appendChild(style);
+        style.sheet.insertRule(p_CSS);
+        console.log('insertCSS => ' + p_CSS);
+
+    },
+    /**
+     * @function HighlightCell
+     * @description Highlight Table
+     */    
+     HighlightCell: (p_Table, p_Search, p_Class) => {
+        console.log('HighlightCell => ' + p_Table);
+        $('#' + p_Table + ' td').each(function () {
+            // get the data from IR cell and make it to lower case
+            cellData = $(this).text();
+            cellData = cellData.toLowerCase();
+
+            // search IR search field value with IR cell data
+            cellData = cellData.search(p_Search);
+
+            // if any match found in IR cells then add the class 
+            if ((cellData != '-1' || cellData == 0) && p_Search != '') {
+                $(this).closest('td').addClass(p_Class);
+            }
+            // if no match found in IR cells then remove the class
+            else if (cellData == '-1') {
+                $(this).closest('td').removeClass(p_Class);
+            } else
+                $(this).closest('td').removeClass(p_Class);
+        });
+    }
+};
