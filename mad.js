@@ -1,5 +1,7 @@
 /**
  * @namespace mad
+ * @author Mark Lenzer
+ * @version 1.2
  **/
 var mad = mad || {};
 
@@ -9,11 +11,11 @@ var mad = mad || {};
  */
 mad.IR = {
     /**
-     * @function initPagination
+     * @function Pagination
      * @description Init createPagination event handlers
      * @param p_InteractiveReport Interactive Report Static ID
      */
-    initPagination: (p_InteractiveReport) => {
+    Pagination: (p_InteractiveReport) => {
         apex.jQuery(apex.gPageContext$).on("apexreadyend", function (e) {
             console.info('ApexReadyEnd');
             mad.IR.createPagination(p_InteractiveReport);
@@ -172,8 +174,8 @@ mad.util = {
      * @function insertCSS
      * @description Append a CSS Rule to the head
      * @param p_CSS => '.highlight { backcolor: gold}'
-     */    
-     insertCSS: (p_CSS) => {
+     */
+    insertCSS: (p_CSS) => {
         // Create a CSS Rule and add to the dom
         var style = document.createElement('style');
         document.head.appendChild(style);
@@ -184,8 +186,8 @@ mad.util = {
     /**
      * @function HighlightCell
      * @description Highlight Table
-     */    
-     HighlightCell: (p_Table, p_Search, p_Class) => {
+     */
+    HighlightCell: (p_Table, p_Search, p_Class) => {
         console.log('HighlightCell => ' + p_Table);
         $('#' + p_Table + ' td').each(function () {
             // get the data from IR cell and make it to lower case
