@@ -124,7 +124,7 @@ mad.download = {
         apex.server.process(callback,
             pOptions, {
                 loadingIndicator: e,
-                loadingIndicatorPosition: "after",
+                loadingIndicatorPosition: "centered",
                 success: function (pData) {
                     mad.download.saveBlob(mad.download.toBlob(pData.content, pData.type), pData.filename);
                 }
